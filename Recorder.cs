@@ -213,18 +213,12 @@ class Recorder
         // TODO: Make this write to a single file, rather than multiple little ones
         // as the little ones will always be slower than a single file. After the recording,
         // the single file can be expanded into multiple (when FS performance is less needed) for ffmpeg
+        var bmp = Capture();
+        int frame = Interlocked.Increment(ref _frames);
+
         Task.Run(() =>
         {
-            //Ignore after stop has been requested.
-            if (captureTimerDelegate == null)
-                return;
-
-            var bmp = Capture();
-            int frame = Interlocked.Increment(ref _frames);
             string outputPath = Path.Combine(tempPath, "_" + frame + imageExtension);
-
-            Debug.Assert(!File.Exists(outputPath));
-
             bmp.Save(outputPath, imageFormat);
             bmp.Dispose();
         });
